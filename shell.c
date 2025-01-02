@@ -4,13 +4,38 @@
 #include <string.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <sys/stat.h>
+#include <errno.h>
+#include <stdbool.h>
 
 #define BUFFER_SIZE 1042
 
 
 extern char **environ; //added to declare environ
 
-typedef enum { false, true } bool;
+char *find_command_in_path(const char *command)
+{
+	char *path_env = getenv("PATH");
+	char *path_dirs = strdup(path_env); //dup PATH to tokenize it
+	char *dir = strtok(path_dirs, ":");
+	static char full_path[BUFFER_SIZE];
+	struct stat sb;
+
+	while (dir != NULL)
+	{
+		snprintf(full_path, sizeof(full_path), "%s/%s", dir, command);
+		if (stat(full_path, &sb) == 0 && (sb.st_mode & S_IXUSR)) //exits command and is executable
+		{
+			free(path_dirs);
+			return full_path;
+		}
+		dir = strtok(NULL, ":");
+	}
+	
+	free(path_dirs);
+	return NULL;
+}
+
 
 void simple_shell()
 {
