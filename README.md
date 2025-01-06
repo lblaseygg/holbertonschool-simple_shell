@@ -36,14 +36,15 @@ Below is the structure of the repository:
 
 | File                   | Description                                       |
 |------------------------|---------------------------------------------------|
-| `shell.c`              | Entry point of the shell program.                 |
-| `main.h`               | Header file with prototypes and standard libraries.|
-| `prompt.c`             | Manages the shell prompt display and input.      |
-| `execute.c`            | Executes user-entered commands.                  |
-| `builtins.c`           | Implements built-in commands like `exit` and `env`.|
-| `helpers.c`            | Utility functions for parsing and error handling.|
+| `main.h`               | Header file with prototypes.                      |
+| `_putchar.c`           | Contains `_putchar` function.                     |
+| `builtins.c`           | Implements built-in commands like `exit`.         |
+| `execute.c`            | Executes user-entered commands.                   |
+| `parser.c`             | Splits user input into tokens for processing.     |
+| `shell.c`              | Contains the main function.                       |
+| `utils.c`              | Utility functions                                 |
 | `man_1_simple_shell`   | Manual page for the custom shell.                 |
-| `AUTHORS`              | File listing contributors to this project.       |
+| `AUTHORS`              | File listing contributors to this project.        |
 
 ---
 
