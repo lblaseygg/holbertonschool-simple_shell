@@ -1,99 +1,77 @@
 #include "main.h"
-#include <unistd.h>
-#include <stdlib.h>
-#include <string.h>
-
-#define READ_BUF_SIZE 1024
-
 /**
- * _getline - Reads input from stdin
- * @line: Pointer to the buffer for input
- * Return: the number of bytes read, or -1 on failure
+ * is_path_form - chekc if the given fikenname is a path
+ * @data: the data strucct pointer
+ *
+ * Return: (Success)
+ * ------- (Fail) otherwise
  */
-ssize_t _getline(char **line)
+int is_path_form(sh_t *data)
 {
-	static char buffer[READ_BUF_SIZE];
-	static size_t buf_pos = 0, buf_size = 0;
-	size_t len = 0;
-	char *new_line = NULL;
-	char c = '\0';
-
-	if (!line)
-		return (-1);
-
-	*line = malloc(READ_BUF_SIZE);
-	if (!*line)
-		return (-1);
-
-	while (1)
+	if (_strchr(data->args[0], '/') != 0)
 	{
-		if (buf_pos == buf_size)
-		{
-			buf_size = read(STDIN_FILENO, buffer, READ_BUF_SIZE);
-			buf_pos = 0;
-			if (buf_size == 0)
-				return (len > 0 ? (ssize_t)len : -1);
-			if (buf_size == (size_t)-1)
-			{
-				free(*line);
-				return(-1);
-			}
-		}
-
-		c = buffer[buf_pos++];
-		if (c == '\n')
-		{
-			(*line)[len] = '\0';
-			return (ssize_t)(len + 1);
-		}
-
-		(*line)[len++] = c;
-
-		if (len % READ_BUF_SIZE == 0)
-		{
-			new_line = realloc(*line, len + READ_BUF_SIZE);
-			if (!new_line)
-			{
-				free(*line);
-				return (-1);
-			}
-			*line = new_line;
-		}
+		data->cmd = _strdup(data->args[0]);
+		return (SUCCESS);
 	}
+	return (FAIL);
 }
-
+#define DELIMITER ":"
 /**
- * tokenize - Tokenizes input into an array of arguments
- * @line: Input string
- * Return: Array of argument strings
+ * is_short_form - chekc if the given filename is short form
+ * @data: the data strucct pointer
+ *
+ * Return: (Success)
+ * ------- (Fail) otherwise
  */
-char **tokenize(char *line)
+void is_short_form(sh_t *data)
 {
-	char **args = NULL;
-	char *token = strtok(line, " \t\n");
-	int i = 0;
+	char *path, *token, *_path;
+	struct stat st;
+	int exist_flag = 0;
 
+	path = _getenv("PATH");
+	_path = _strdup(path);
+	token = strtok(_path, DELIMITER);
 	while (token)
 	{
-		args = realloc(args, sizeof(char *) * (i + 1));
-		if (!args)
+		data->cmd = _strcat(token, data->args[0]);
+		if (stat(data->cmd, &st) == 0)
 		{
-			perror("realloc");
-			free(args);
-			return (NULL);
+			exist_flag += 1;
+			break;
 		}
-		args[i++] = token;
-		token = strtok(NULL, " \t\n");
+		free(data->cmd);
+		token = strtok(NULL, DELIMITER);
 	}
-
-	args = realloc(args, sizeof(char *) * (i + 1));
-	if (!args)
+	if (exist_flag == 0)
 	{
-		perror("realloc");
-		free(args);
-		return(NULL);
+		data->cmd = _strdup(data->args[0]);
 	}
-	args[i] = NULL;
-	
-	return args;
+	free(_path);
+}
+#undef DELIMITER
+/**
+ * is_builtin - checks if the command is builtin
+ * @data: a pointer to the data structure
+ *
+ * Return: (Success) 0 is returned
+ * ------- (Fail) negative number will returned
+ */
+int is_builtin(sh_t *data)
+{
+	blt_t blt[] = {
+		{"exit", abort_prg},
+		{"cd", change_dir},
+		{"help", display_help},
+		{NULL, NULL}
+	};
+	int i = 0;
+
+	while ((blt + i)->cmd)
+	{
+		if (_strcmp(data->args[0], (blt + i)->cmd) == 0)
+			return (SUCCESS);
+		i++;
+	}
+	return (NEUTRAL);
 }
