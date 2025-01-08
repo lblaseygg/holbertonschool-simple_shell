@@ -52,7 +52,6 @@ int main(void)
  * @data: a pointer to the struct of data
  *
  * Return: (Success) a positive number
- * ------- (Fail) a negative number
  */
 int read_line(sh_t *data)
 {
@@ -134,7 +133,6 @@ int split_line(sh_t *data)
  * @data: a pointer to the struct of data
  *
  * Return: (Success) a positive number
- * ------- (Fail) a negative number
  */
 int parse_line(sh_t *data)
 {
@@ -155,7 +153,6 @@ int parse_line(sh_t *data)
  * @data: a pointer to the struct of data
  *
  * Return: (Success) a positive number
- * ------- (Fail) a negative number
  */
 int process_cmd(sh_t *data)
 {

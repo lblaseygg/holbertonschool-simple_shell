@@ -80,6 +80,43 @@ int abort_prg(sh_t *data __attribute__((unused)))
  */
 int display_help(sh_t *data)
 {
+/**
+ * abort_prg - exit the program
+ * @data: a pointer to the data structure
+ *
+ * Return: (Success) 0 is returned
+ * ------- (Fail) negative number will returned
+ */
+int abort_prg(sh_t *data __attribute__((unused)))
+{
+	int code, i = 0;
+
+	if (data->args[1] == NULL)
+	{
+		free_data(data);
+		exit(errno);
+	}
+	while (data->args[1][i])
+	{
+		if (_isalpha(data->args[1][i++]) < 0)
+		{
+			data->error_msg = _strdup("Illegal number\n");
+			return (FAIL);
+		}
+	}
+	code = _atoi(data->args[1]);
+	free_data(data);
+	exit(code);
+}
+/**
+ * display_help - display the help menu
+ * @data: a pointer to the data structure
+ *
+ * Return: (Success) 0 is returned
+ * ------- (Fail) negative number will returned
+ */
+int display_help(sh_t *data)
+{
 	int fd, fw, rd = 1;
 	char c;
 
