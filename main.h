@@ -108,5 +108,4 @@ int check_builtin(sh_t *data);
 int is_path_form(sh_t *data);
 void is_short_form(sh_t *data);
 int is_builtin(sh_t *data);
-
-#endif 
+#endif
