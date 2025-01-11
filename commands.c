@@ -2,9 +2,11 @@
 
 /**
  * commands - Searches for a command in the PATH and executes it
+ *
  * @args: Array of arguments, with args[0] as the command
  * @program_name: Name of the shell program
  * @command_count: Command number for error messages
+ *
  * Return: 0 on success, -1 if the command was not found
  */
 int commands(char **args, char *program_name, int command_count)

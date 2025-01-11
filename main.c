@@ -2,8 +2,10 @@
 
 /**
  * main - Entry point of the shell program
+ *
  * @argc: Argument count
  * @argv: Argument vector
+ *
  * Return: Always 0 on success
  */
 int main(int argc, char **argv)
