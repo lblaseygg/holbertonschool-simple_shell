@@ -1,78 +1,130 @@
 #include "main.h"
 
+#define SETOWD(V) (V = _strdup(_getenv("OLDPWD")))
 /**
- * parse_input - Tokenizes the user input into arguments
+ * change_dir - changes directory
+ * @data: a pointer to the data structure
  *
- * @input: User input string
- *
- * Return: Array of arguments, or NULL on failure
+ * Return: (Success) 0 is returned
+ * ------- (Fail) negative number will returned
  */
-char **parse_input(char *input)
+int change_dir(sh_t *data)
 {
-	char **args;
-	char *token;
-	int i;
+	char *home;
 
-	args = malloc(MAX_ARGS * sizeof(char *));
-	if (!args)
+	home = _getenv("HOME");
+	if (data->args[1] == NULL)
 	{
-		perror("malloc");
-		return (NULL);
+		SETOWD(data->oldpwd);
+		if (chdir(home) < 0)
+			return (FAIL);
+		return (SUCCESS);
 	}
-
-	token = strtok(input, " ");
-	i = 0;
-	while (token != NULL && i < MAX_ARGS - 1)
+	if (_strcmp(data->args[1], "-") == 0)
 	{
-		args[i++] = token;
-		token = strtok(NULL, " ");
+		if (data->oldpwd == 0)
+		{
+			SETOWD(data->oldpwd);
+			if (chdir(home) < 0)
+				return (FAIL);
+		}
+		else
+		{
+			SETOWD(data->oldpwd);
+			if (chdir(data->oldpwd) < 0)
+				return (FAIL);
+		}
 	}
-	args[i] = NULL;
-	return (args);
+	else
+	{
+		SETOWD(data->oldpwd);
+		if (chdir(data->args[1]) < 0)
+			return (FAIL);
+	}
+	return (SUCCESS);
 }
-
+#undef GETCWD
 /**
- * builtins - Handles built-in commands like 'exit' and 'env'
+ * abort_prg - exit the program
+ * @data: a pointer to the data structure
  *
- * @args: Array of arguments
- * @input: User input string
- *
- * Return: 1 if a built-in was handled, 0 otherwise
+ * Return: (Success) 0 is returned
+ * ------- (Fail) negative number will returned
  */
-int builtins(char **args, char *input)
+int abort_prg(sh_t *data __attribute__((unused)))
 {
-	if (strcmp(args[0], "exit") == 0)
-	{
-		free(input);
-		exit(0);
-	}
-	else if (strcmp(args[0], "env") == 0)
-	{
-		char **env = environ;
+	int code, i = 0;
 
-		while (*env)
-			printf("%s\n", *env++);
-		return (1);
+	if (data->args[1] == NULL)
+	{
+		free_data(data);
+		exit(errno);
 	}
-	return (0);
+	while (data->args[1][i])
+	{
+		if (_isalpha(data->args[1][i++]) < 0)
+		{
+			data->error_msg = _strdup("Illegal number\n");
+			return (FAIL);
+		}
+	}
+	code = _atoi(data->args[1]);
+	free_data(data);
+	exit(code);
 }
 /**
- * _getnev - Retrieves the value of an environment variable
+ * display_help - display the help menu
+ * @data: a pointer to the data structure
  *
- * @name: Name of the environment variable
- *
- * Return: Pointer to the value of the variable, or NULL if not found
+ * Return: (Success) 0 is returned
+ * ------- (Fail) negative number will returned
  */
-char *_getnev(const char *name)
+int display_help(sh_t *data)
 {
-	char **env = environ;
-	size_t len = strlen(name);
+	int fd, fw, rd = 1;
+	char c;
 
-	while (*env)
+	fd = open(data->args[1], O_RDONLY);
+	if (fd < 0)
 	{
-		if (strncmp(*env, name, len) == 0 && (*env)[len] == '=')
-			return (*env + len + 1);
-		env++;
+		data->error_msg = _strdup("no help topics match\n");
+		return (FAIL);
 	}
-	return (NULL);
+	while (rd > 0)
+	{
+		rd = read(fd, &c, 1);
+		fw = write(STDOUT_FILENO, &c, rd);
+		if (fw < 0)
+		{
+			data->error_msg = _strdup("cannot write: permission denied\n");
+			return (FAIL);
+		}
+	}
+	PRINT("\n");
+	return (SUCCESS);
+}
+/**
+ * handle_builtin - handle and manage the builtins cmd
+ * @data: a pointer to the data structure
+ *
+ * Return: (Success) 0 is returned
+ * ------- (Fail) negative number will returned
+ */
+int handle_builtin(sh_t *data)
+{
+	blt_t blt[] = {
+		{"exit", abort_prg},
+		{"cd", change_dir},
+		{"help", display_help},
+		{NULL, NULL}
+	};
+	int i = 0;
+
+	while ((blt + i)->cmd)
+	{
+		if (_strcmp(data->args[0], (blt + i)->cmd) == 0)
+			return ((blt + i)->f(data));
+		i++;
+	}
+	return (FAIL);
 }
