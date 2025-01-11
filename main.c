@@ -1,10 +1,8 @@
 #include "main.h"
-
 /**
  * main - the main function
  *
  * Return: (Success) 0 always
- * ------- (Fail) we drop out the looser :)
  */
 int main(void)
 {

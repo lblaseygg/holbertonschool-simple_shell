@@ -58,7 +58,7 @@ int abort_prg(sh_t *data __attribute__((unused)))
 	if (data->args[1] == NULL)
 	{
 		free_data(data);
-		exit(errno);
+		exit(0);
 	}
 	while (data->args[1][i])
 	{
@@ -77,7 +77,6 @@ int abort_prg(sh_t *data __attribute__((unused)))
  * @data: a pointer to the data structure
  *
  * Return: (Success) 0 is returned
- * ------- (Fail) negative number will returned
  */
 int display_help(sh_t *data)
 {
@@ -108,7 +107,6 @@ int display_help(sh_t *data)
  * @data: a pointer to the data structure
  *
  * Return: (Success) 0 is returned
- * ------- (Fail) negative number will returned
  */
 int handle_builtin(sh_t *data)
 {
