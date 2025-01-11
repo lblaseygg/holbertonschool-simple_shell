@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 # Simple Shell Project
+=======
+# Simple Shell Project - Personal Branch
+>>>>>>> 38194c4 (Update README.md)
 
 ## Table of Contents
 - [Description](#description)
@@ -14,9 +18,20 @@
 ---
 
 ## Description
+<<<<<<< HEAD
 The **Simple Shell** project is a custom UNIX command-line interpreter written in **C programming language**. This project replicates a basic shell behavior by executing commands, handling errors, and enabling users to interact with their system through a simple prompt.
 
 This program was developed as part of the curriculum at **Holberton School**, emphasizing system calls, process management, memory handling, and coding standards.
+=======
+This is a personal branch of the **Simple Shell** project, a custom UNIX command-line interpreter written in **C programming language**. 
+
+While this project is developed collaboratively with a partner, the code in this branch represents my individual implementation of the tasks. By the end of the project, the logic and structure of this implementation may differ from my partner's version, reflecting our independent approaches.
+
+This program was developed as part of the curriculum at **Holberton School** and focuses on:
+- System calls and process handling.
+- Memory management.
+- Implementation of a functional shell within specified constraints.
+>>>>>>> 38194c4 (Update README.md)
 
 ---
 
@@ -25,6 +40,7 @@ This project adheres to the following guidelines:
 - Code follows **Betty coding style** (mandatory).
 - Compiled on **Ubuntu 20.04 LTS** using:
   ```bash
+<<<<<<< HEAD
   gcc -Wall -Werror -Wextra -pedantic *.c -o hsh
   ```
 - No use of standard libraries like `printf`, `malloc`, or advanced shell features initially.
@@ -140,3 +156,6 @@ file1 file2 simple_shell
 - **Tommy Hernandez** - [Tommy's GitHub](https://github.com/TommyBryan)
 
 ---
+=======
+  gcc -Wall -Werror -Wextra -pedantic -std=gnu89 *.c -o hsh
+>>>>>>> 38194c4 (Update README.md)
